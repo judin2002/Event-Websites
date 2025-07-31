@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jerin's & Roji's Wedding Celebration</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <!-- Mapbox GL CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fff5f7;
+            color: #6a052e;
+            /* Animated gradient background */
+            background: linear-gradient(-45deg, #fff5f7, #ffe4e1, #ffd7e2, #ffcce0);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            overflow-x: hidden;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: #d81b60;
+        }
+        .couple-name {
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-bg {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(216, 27, 96, 0.2);
+            border: 1px solid rgba(255, 192, 203, 0.5);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .section-bg:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(216, 27, 96, 0.3);
+        }
+        /* Map container styling */
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+        }
+        /* Countdown timer styling */
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            margin: 0 0.5rem;
+            min-width: 80px;
+            box-shadow: 0 8px 15px rgba(216, 27, 96, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        .countdown-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(216, 27, 96, 0.2);
+        }
+        .countdown-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #d81b60;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        .countdown-label {
+            font-size: 0.9rem;
+            color: #a05252;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+            letter-spacing: 1px;
+        }
+        /* Decorative line for headings */
+        .decorative-line {
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ff69b4, #d81b60);
+            margin: 0.75rem auto 2rem auto;
+            border-radius: 5px;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffe4e1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff69b4;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d81b60;
+        }
+        /* Weather widget */
+        .weather-widget {
+            background: rgba(255,255,255,0.7);
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+        }
+        /* Floating hearts */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            transform: rotate(45deg);
+            animation: float 8s linear infinite;
+        }
+        .heart:before, .heart:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: #ff69b4;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+        @keyframes float {
+            0% {
+                transform: rotate(45deg) translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(45deg) translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            opacity: 0;
+            animation: confettiFall 5s linear infinite;
+        }
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 1;
+            }
+        }
+        /* Name animation */
+        .name-animation {
+            display: inline-block;
+            position: relative;
+        }
+        .name-animation::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, #ff69b4, #d81b60);
+            transform-origin: bottom right;
+            transition: transform 0.5s ease-out;
+        }
+        .name-animation:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite both;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .mapboxgl-popup-content {
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .mapboxgl-popup-close-button {
+            font-size: 1.5rem;
+            padding: 0 0.5rem;
+        }
+        /* Fix for sticky bottom scroll */
+html {
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+    position: relative;
+}
+
+/* Add extra space at gallery bottom */
+#photoGallery {
+    padding-bottom: 20px;
+}
+
+/* Adjust main container */
+.min-h-screen {
+    min-height: calc(100vh - 1px);
+}
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Floating hearts background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Confetti container -->
+    <div id="confettiContainer" class="fixed top-0 left-0 w-full h-full pointer-events-none"></div>
+
+    <div class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6 lg:px-8">
+
+        <!-- Hero Section -->
+        <section class="w-full max-w-2xl mx-auto text-center py-12 mb-8 bg-gradient-to-br from-pink-400 to-rose-500 rounded-3xl shadow-2xl border-4 border-white transform hover:scale-[1.01] transition-transform duration-300 ease-in-out animate__animated animate__fadeIn relative overflow-hidden">
+            <h1 class="text-5xl sm:text-6xl font-bold mb-4 text-white drop-shadow-lg couple-name">
+                <span class="block name-animation heartbeat">Jerin</span>
+                <span class="text-4xl sm:text-5xl font-normal text-white/90 float">&amp;</span>
+                <span class="block name-animation heartbeat" style="animation-delay: 0.3s">Roji</span>
+            </h1>
+            <p class="text-xl sm:text-2xl text-white font-semibold mb-2 drop-shadow">Are Getting Married!</p>
+            <div class="flex justify-center items-center my-4">
+                <div class="w-16 h-1 bg-white/80 mx-2"></div>
+                <i class="fas fa-heart text-white/80 mx-2"></i>
+                <div class="w-16 h-1 bg-white/80 mx-2"></div>
+            </div>
+            <p class="text-lg sm:text-xl text-white/90 mt-2">Join us to celebrate our special day</p>
+            <p class="text-md text-white/90 mt-4 pulse">
+                <i class="far fa-calendar-alt mr-2"></i>August 17, 2025 | Kochi, Kerala
+            </p>
+
+            <!-- Countdown Timer -->
+            <div class="mt-8 flex justify-center items-center" id="countdown">
+                <div class="countdown-item">
+                    <span id="days" class="countdown-value">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="hours" class="countdown-value">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="minutes" class="countdown-value">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span id="seconds" class="countdown-value">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+            <p id="countdown-message" class="text-lg text-white mt-4 hidden font-bold">The big day is here!</p>
+            
+            <!-- Weather Widget -->
+            <div class="weather-widget mt-6 mx-auto max-w-xs" id="weatherWidget">
+                <div class="flex items-center justify-center">
+                    <i class="fas fa-cloud-sun text-3xl text-pink-700 mr-3"></i>
+                    <div>
+                        <p class="text-sm text-pink-900">Expected weather on wedding day:</p>
+                        <p class="text-lg font-semibold text-pink-800" id="weatherText">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parents Information Section -->
+        <section class="w-full max-w-2xl mx-auto section-bg p-6 mb-8 animate__animated animate__fadeInUp">
+            <h2 class="text-3xl font-semibold text-center mb-2">Blessings From</h2>
+            <span class="decorative-line"></span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Bride's Parents -->
+                <div class="text-center">
+                    <h3 class="text-2xl font-semibold mb-4 text-pink-600">Groom's Parents</h3>
+                    <div class="bg-pink-50 p-6 rounded-xl">
+                        <p class="text-lg font-medium">Johnson PA</p>
+                        <p class="text-sm text-gray-600">(Father)</p>
+                        <div class="h-px bg-pink-200 my-3"></div>
+                        <p class="text-lg font-medium">Dolly Johnson</p>
+                        <p class="text-sm text-gray-600">(Mother)</p>
+                        <div class="h-px bg-pink-200 my-3"></div>
+                        <p class="text-md mt-4">
+                            <i class="fas fa-home text-pink-500 mr-2"></i>
+                            Panackal House, Cherukadapuram, North Paravur
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Groom's Parents -->
+                <div class="text-center">
+                    <h3 class="text-2xl font-semibold mb-4 text-pink-600">Bride's Parents</h3>
+                    <div class="bg-pink-50 p-6 rounded-xl">
+                        <p class="text-lg font-medium">Late Johnson Thomas</p>
+                        <p class="text-sm text-gray-600">(Father)</p>
+                        <div class="h-px bg-pink-200 my-3"></div>
+                        <p class="text-lg font-medium">Ruby Johnson</p>
+                        <p class="text-sm text-gray-600">(Mother)</p>
+                        <div class="h-px bg-pink-200 my-3"></div>
+                        <p class="text-md mt-4">
+                            <i class="fas fa-home text-pink-500 mr-2"></i>
+                            Karyankal House, Maryland, Pala
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details Section -->
+        <section class="w-full max-w-2xl mx-auto section-bg p-6 mb-8 animate__animated animate__fadeInUp">
+            <h2 class="text-3xl font-semibold text-center mb-2">Event Details</h2>
+            <span class="decorative-line"></span>
+
+            <!-- Engagement -->
+            <div class="mb-8 pb-6 border-b border-pink-200 last:border-b-0">
+                <h3 class="text-2xl font-semibold mb-3 text-d81b60 flex items-center justify-center">
+                    <i class="fas fa-ring mr-3"></i>Engagement Ceremony
+                </h3>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-calendar-day text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Date:</span> August 9, 2025</p>
+                </div>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-clock text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Time:</span> 12:00 PM onwards</p>
+                </div>
+                <div class="flex items-start">
+                    <i class="fas fa-map-marker-alt text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Venue:</span> St Mary's Church, Maryland, Pala</p>
+                </div>
+                <div class="flex items-start mt-2">
+                    <i class="fas fa-glass-cheers text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Reception:</span> Church Parish Hall</p>
+                </div>
+                <div class="mt-3">
+                    <a href="https://maps.app.goo.gl/sGgWLfnNBG7oftpq6" target="_blank" class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-300">
+                        <i class="fas fa-map-marked-alt mr-2"></i> View Location on Map
+                    </a>
+                </div>
+                <p class="text-sm text-gray-600 mt-4 italic bg-pink-50 p-3 rounded-lg border-l-4 border-pink-300">
+                    <i class="fas fa-heart text-pink-400 mr-2"></i>An intimate gathering to mark the beginning of our journey.
+                </p>
+            </div>
+
+            <!-- Pre-wedding Eve -->
+            <div class="mb-8 pb-6 border-b border-pink-200 last:border-b-0">
+                <h3 class="text-2xl font-semibold mb-3 text-d81b60 flex items-center justify-center">
+                    <i class="fas fa-glass-cheers mr-3"></i>Pre-Wedding Eve Celebration
+                </h3>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-calendar-day text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Date:</span> August 14, 2025</p>
+                </div>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-clock text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Time:</span> 6:30 PM onwards</p>
+                </div>
+                <div class="flex items-start">
+                    <i class="fas fa-map-marker-alt text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Venue:</span> Parish hall, Fathima Matha church, Cherukadapuram</p>
+                </div>
+                <div class="mt-3">
+                    <a href="https://maps.app.goo.gl/YQoPSQhangjvUDdN9" target="_blank" class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-300">
+                        <i class="fas fa-map-marked-alt mr-2"></i> View Location on Map
+                    </a>
+                </div>
+                <p class="text-sm text-gray-600 mt-4 italic bg-pink-50 p-3 rounded-lg border-l-4 border-pink-300">
+                    <i class="fas fa-music text-pink-400 mr-2"></i>Join us for a fun-filled evening of music, dance, and delicious food!
+                </p>
+            </div>
+
+            <!-- Wedding Day -->
+            <div class="mb-0 pb-0">
+                <h3 class="text-2xl font-semibold mb-3 text-d81b60 flex items-center justify-center">
+                    <i class="fas fa-church mr-3"></i>Wedding Ceremony & Reception
+                </h3>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-calendar-day text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Date:</span> August 17, 2025</p>
+                </div>
+                <div class="flex items-start mb-2">
+                    <i class="fas fa-clock text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Holy Mass:</span> 12:05 PM at St Thomas Syro Malabar Church Kottakkavu</p>
+                </div>
+                <div class="flex items-start">
+                    <i class="fas fa-map-marker-alt text-pink-500 mt-1 mr-3"></i>
+                    <p class="text-md text-gray-700"><span class="font-medium">Reception:</span> Treesa Garden Auditorium, North Paravur</p>
+                </div>
+                <div class="mt-3 space-y-2">
+                    <a href="https://maps.app.goo.gl/LqGW6Pr6tKGKtDZ26" target="_blank" class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-300 mr-2">
+                        <i class="fas fa-church mr-2"></i> Church Location
+                    </a>
+                    <a href="https://maps.app.goo.gl/KVMPNFS7YhykEHabA" target="_blank" class="inline-flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors duration-300">
+                        <i class="fas fa-utensils mr-2"></i> Reception Location
+                    </a>
+                </div>
+                <p class="text-sm text-gray-600 mt-4 italic bg-pink-50 p-3 rounded-lg border-l-4 border-pink-300">
+                    <i class="fas fa-heart text-pink-400 mr-2"></i>The day we say "I do"! Your presence is our greatest gift.
+                </p>
+            </div>
+        </section>
+
+        <!-- Photo Gallery Section -->
+        <section class="w-full max-w-2xl mx-auto section-bg p-6 mb-8 animate__animated animate__fadeInUp">
+            <h2 class="text-3xl font-semibold text-center mb-2">Memories</h2>
+            <span class="decorative-line"></span>
+            <p class="text-center text-lg text-gray-700 mb-6">Our cherished moments together</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="photoGallery">
+                <!-- Photos will be loaded dynamically -->
+            </div>
+            
+            <div class="text-center mt-6">
+                <button id="loadMoreBtn" class="px-6 py-2 bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors duration-300">
+                    Load More Photos
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <script>
+        // JavaScript for Countdown Timer
+        const weddingDate = new Date("August 17, 2025 12:05:00").getTime();
+        const countdownElement = document.getElementById("countdown");
+        const countdownMessage = document.getElementById("countdown-message");
+
+        const updateCountdown = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result
+            document.getElementById("days").innerHTML = String(days).padStart(2, '0');
+            document.getElementById("hours").innerHTML = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerHTML = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerHTML = String(seconds).padStart(2, '0');
+
+            // If the countdown is over
+            if (distance < 0) {
+                clearInterval(updateCountdown);
+                countdownElement.style.display = "none";
+                countdownMessage.classList.remove("hidden");
+                countdownMessage.innerHTML = "The big day is here!";
+            }
+        }, 1000);
+        
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartCount = 15;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                
+                // Random position and animation
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                heart.style.transform = `rotate(45deg) scale(${Math.random() * 0.5 + 0.5})`;
+                
+                container.appendChild(heart);
+            }
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#ff69b4', '#d81b60', '#ff4081', '#ff1493', '#c71585'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random properties
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(confetti);
+            }
+        }
+
+        // Weather API (simplified version)
+        function getWeather() {
+            try {
+                // Since we don't have an actual API key, we'll simulate weather data
+                const weatherConditions = ["Sunny", "Partly Cloudy", "Mostly Sunny", "Clear Skies"];
+                const randomTemp = Math.floor(Math.random() * 5) + 28; // Between 28-32°C
+                const randomCondition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+                
+                document.getElementById('weatherText').textContent = `${randomTemp}°C, ${randomCondition}`;
+                
+                // Update icon based on condition
+                let weatherIcon = 'fa-cloud-sun';
+                if (randomCondition.includes("Sunny")) weatherIcon = 'fa-sun';
+                else if (randomCondition.includes("Cloudy")) weatherIcon = 'fa-cloud';
+                
+                document.querySelector('#weatherWidget i').className = `fas ${weatherIcon} text-3xl text-pink-700 mr-3`;
+            } catch (error) {
+                console.error("Error fetching weather:", error);
+                document.getElementById('weatherText').textContent = "Sunny, 30°C";
+            }
+        }
+
+        // Photo Gallery
+        const photoGallery = document.getElementById('photoGallery');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        let currentPage = 1;
+        const photosPerPage = 6;
+        
+        const allPhotos = [
+
+            // First pic - 2
+            'https://i.ibb.co/G4X595J6/2.jpg',
+
+            // Second pic - W2
+            'https://i.ibb.co/5Xk1TPnh/W2.jpg',
+
+            // Third pic - W1
+            'https://i.ibb.co/whxw4LJF/W1.jpg',
+            
+            // Fourth pic - W5
+            'https://i.ibb.co/ccsd3ssd/W5.jpg',
+
+            // Fifth pic - W4
+            'https://i.ibb.co/prb4TWvD/W4.jpg',
+    
+            // Sixth pic - W3
+            'https://i.ibb.co/fYWTtvzS/W3.jpg'
+        ];
+        
+        function loadPhotos(page) {
+            const startIndex = (page - 1) * photosPerPage;
+            const endIndex = startIndex + photosPerPage;
+            const photosToLoad = allPhotos.slice(startIndex, endIndex);
+            
+            photosToLoad.forEach(photo => {
+                const photoElement = document.createElement('div');
+                photoElement.className = 'relative rounded-xl overflow-hidden shadow-lg cursor-pointer transform hover:scale-105 transition-transform duration-300 group';
+                photoElement.innerHTML = `
+                    <img src="${photo}" alt="Couple photo" class="w-full h-48 object-cover rounded-xl">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 class="text-white text-sm font-semibold">Our Memory</h3>
+                    </div>
+                `;
+                photoElement.onclick = () => openModal(photo.replace('/400/', '/800/'));
+                photoGallery.appendChild(photoElement);
+            });
+            
+            if (endIndex >= allPhotos.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+        
+        loadMoreBtn.addEventListener('click', () => {
+            currentPage++;
+            loadPhotos(currentPage);
+        });
+
+        // Image Modal
+        function openModal(imageSrc) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="relative max-w-4xl w-full">
+                    <button onclick="this.parentElement.parentElement.remove()" class="absolute -top-12 right-0 text-white text-3xl hover:text-pink-300 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <img src="${imageSrc}" alt="Enlarged photo" class="w-full max-h-[80vh] object-contain rounded-lg">
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Prevent scroll jank on mobile
+let lastScroll = 0;
+const body = document.body;
+
+window.addEventListener('scroll', function() {
+    const currentScroll = window.pageYOffset;
+    
+    // At bottom of page
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        window.scrollTo(0, document.body.offsetHeight - window.innerHeight - 1);
+    }
+    
+    // At top of page
+    if (currentScroll <= 0) {
+        window.scrollTo(0, 1);
+    }
+    
+    lastScroll = currentScroll;
+});
+
+// Initial check
+setTimeout(() => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        window.scrollTo(0, document.body.offsetHeight - window.innerHeight - 1);
+    }
+}, 500);
+
+        // Initialize page
+        window.onload = function() {
+            createHearts();
+            createConfetti();
+            getWeather();
+            loadPhotos(currentPage);
+            
+            // Add fade-in animation to sections
+            const sections = document.querySelectorAll('section');
+            sections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.1}s`;
+            });
+        };
+    </script>
+</body>
+</html>
